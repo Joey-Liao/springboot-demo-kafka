@@ -1,0 +1,33 @@
+spring:
+  kafka:
+    bootstrap-servers: 192.168.10.102:9092,192.168.10.102:9093,192.168.10.102:9094  #bootstrap-servers：连接kafka的地址，多个地址用逗号分隔
+    consumer:
+      group-id: myGroup
+      enable-auto-commit: true
+      auto-commit-interval: 100ms # 提交offset延时(接收到消息后多久提交offset)
+      auto-offset-reset: latest
+      max-poll-records: 50 # 批量消费每次最多消费多少条消息
+      properties:
+        session.timeout.ms: 15000
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+
+    producer:
+      retries: 0 #若设置大于0的值，客户端会将发送失败的记录重新发送
+      batch-size: 16384 #当将多个记录被发送到同一个分区时， Producer 将尝试将记录组合到更少的请求中。这有助于提升客户端和服务器端的性能。这个配置控制一个批次的默认大小（以字节为单位）。16384是缺省的配置
+      buffer-memory: 33554432 #Producer 用来缓冲等待被发送到服务器的记录的总字节数，33554432是缺省配置
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer #关键字的序列化类
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer #值的序列化类
+      acks: 1 # 应答级别:多少个分区副本备份完成时向生产者发送ack确认(可选0、1、all/-1)
+
+#      transaction-id-prefix: tx- # 开启kafka事务 再使用@Transactional注解在方法上即可
+
+#      设置分区
+#      properties:
+#        partitioner:
+#          class: com.lzy.springbootdemo.utils.CustomizePartitioner
+
+#    listener:
+#      type: batch # 设置批量消费
+#      missing-topics-fatal: false # 消费端监听的topic不存在时，项目启动会报错(关掉)
